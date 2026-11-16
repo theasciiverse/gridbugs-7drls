@@ -6,13 +6,27 @@ pub type AppAudioPlayer = Option<StaticAudioPlayer>;
 pub type AppSound = Option<StaticSound>;
 pub type AppHandle = Option<StaticHandle>;
 
-const GAMEPLAY0: &[u8] = include_bytes!("./audio/Terminant.ogg");
-const GAMEPLAY1: &[u8] = include_bytes!("./audio/Disconnected.ogg");
-const GAMEPLAY2: &[u8] = include_bytes!("./audio/Absolute+Terror.ogg");
-const BOSS: &[u8] = include_bytes!("./audio/Panthalassa.ogg");
-const END_TEXT: &[u8] = include_bytes!("./audio/Bush+Week.ogg");
-const MENU: &[u8] = include_bytes!("./audio/10,000+People+Chanting,+-I'm+an+Individual-.ogg");
-const EXPLOSION: &[u8] = include_bytes!("./audio/explosion.ogg");
+#[cfg(feature = "sound")]
+mod data {
+    pub const GAMEPLAY0: &[u8] = include_bytes!("./audio/Terminant.ogg");
+    pub const GAMEPLAY1: &[u8] = include_bytes!("./audio/Disconnected.ogg");
+    pub const GAMEPLAY2: &[u8] = include_bytes!("./audio/Absolute+Terror.ogg");
+    pub const BOSS: &[u8] = include_bytes!("./audio/Panthalassa.ogg");
+    pub const END_TEXT: &[u8] = include_bytes!("./audio/Bush+Week.ogg");
+    pub const MENU: &[u8] = include_bytes!("./audio/10,000+People+Chanting,+-I'm+an+Individual-.ogg");
+    pub const EXPLOSION: &[u8] = include_bytes!("./audio/explosion.ogg");
+}
+#[cfg(not(feature = "sound"))]
+mod data {
+    pub const GAMEPLAY0: &[u8] = &[];
+    pub const GAMEPLAY1: &[u8] = &[];
+    pub const GAMEPLAY2: &[u8] = &[];
+    pub const BOSS: &[u8] = &[];
+    pub const END_TEXT: &[u8] = &[];
+    pub const MENU: &[u8] = &[];
+    pub const EXPLOSION: &[u8] = &[];
+}
+use data::*;
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub enum Audio {

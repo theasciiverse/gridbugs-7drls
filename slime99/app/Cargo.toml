@@ -5,7 +5,11 @@ authors = ["Stephen Sherratt <stephen@sherra.tt>"]
 edition = "2018"
 
 [features]
-native = ["general_audio_static/native", "general_storage_static/file"]
+# The music and sound effects (src/audio); a build without them has no audio.
+default = ["sound"]
+sound = []
+native = ["general_storage_static/file"]
+native_sound = ["sound", "general_audio_static/native"]
 web = ["general_audio_static/web", "general_storage_static/web", "getrandom/js"]
 
 [dependencies]
