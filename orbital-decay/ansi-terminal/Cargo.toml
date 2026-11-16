@@ -4,10 +4,16 @@ version = "0.1.0"
 authors = ["Stephen Sherratt <stephen@sherra.tt>"]
 edition = "2021"
 
+[features]
+# Music and sound effects. The Asciiverse build leaves them out (--no-default-features).
+default = ["sound"]
+sound = ["orbital_decay_native/sound"]
+
 [dependencies]
 gridbugs = { version = "0.10", features = [ "chargrid_ansi_terminal_gamepad" ] }
 env_logger = "0.10"
 meap = "0.5"
-orbital_decay_app = { path = "../app" }
-orbital_decay_native = { path = "../native" }
+orbital_decay_app = { path = "../app", default-features = false }
+orbital_decay_native = { path = "../native", default-features = false }
+log = "0.4"
 rand = "0.8"

@@ -4,12 +4,17 @@ version = "0.1.0"
 authors = ["Stephen Sherratt <stephen@sherra.tt>"]
 edition = "2021"
 
+[features]
+# Audio through the system's sound device; without it the game is silent.
+default = ["sound"]
+sound = [
+    "gridbugs/audio_backend_native",
+    "gridbugs/audio_format_native_vorbis",
+    "orbital_decay_app/sound",
+]
+
 [dependencies]
-gridbugs = { version = "0.10", features = [
-    "storage_backend_file",
-    "audio_backend_native",
-    "audio_format_native_vorbis",
-] }
+gridbugs = { version = "0.10", features = ["storage_backend_file"] }
 log = "0.4"
-orbital_decay_app = { path = "../app", features = ["native"] }
+orbital_decay_app = { path = "../app", default-features = false, features = ["native"] }
 meap = "0.5"

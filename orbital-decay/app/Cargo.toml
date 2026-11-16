@@ -5,9 +5,12 @@ authors = ["Stephen Sherratt <stephen@sherra.tt>"]
 edition = "2021"
 
 [features]
+# The music and sound effects (audio-data); a build without them has no audio.
+default = ["sound"]
+sound = ["audio_data"]
 print_stdout = []
 print_log = []
-native = ["gridbugs/storage_backend_file", "gridbugs/audio_backend_native"]
+native = ["gridbugs/storage_backend_file"]
 web = ["getrandom/js", "gridbugs/storage_backend_web", "gridbugs/audio_backend_web"]
 
 [dependencies]
@@ -23,7 +26,7 @@ gridbugs = { version = "0.10", features = [
     "chargrid_gamepad",
 ] }
 orbital_decay_game = { path = "../game" }
-audio_data = { path = "../audio-data" }
+audio_data = { path = "../audio-data", optional = true }
 log = "0.4"
 serde = { version = "1.0", features = ["serde_derive"] }
 rand = "0.8"

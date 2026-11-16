@@ -24,6 +24,12 @@ pub struct AudioTable {
 }
 
 impl AudioTable {
+    #[cfg(not(feature = "sound"))]
+    pub fn new(_audio_player: &AppAudioPlayer) -> Self {
+        Self { map: None }
+    }
+
+    #[cfg(feature = "sound")]
     pub fn new(audio_player: &AppAudioPlayer) -> Self {
         use audio_data::*;
         let map = audio_player.as_ref().map(|audio_player| {
