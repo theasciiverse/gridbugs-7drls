@@ -1,0 +1,6 @@
+**/target/
+**/*.rs.bk
+**/*.sw?
+**/*.wasm
+*.zip
+*.mp3
