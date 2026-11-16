@@ -1,0 +1,123 @@
+name: release
+on:
+  push:
+    tags:
+    - '*'
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  release-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+        targets: x86_64-pc-windows-gnu
+    - uses: actions/checkout@v3
+    - run: cargo build --manifest-path=wgpu/Cargo.toml --target=x86_64-pc-windows-gnu --release
+    - run: cargo build --manifest-path=ggez/Cargo.toml --target=x86_64-pc-windows-gnu --release
+    - run: echo OUTPUT_DIR=boat-journey-windows-x86_64-${{ github.ref_name }} >> $env:GITHUB_ENV
+    - run: mkdir x
+    - run: mkdir x\$env:OUTPUT_DIR
+    - run: copy-item extras\windows\* x\$env:OUTPUT_DIR
+    - run: copy-item target\x86_64-pc-windows-gnu\release\boat_journey_wgpu.exe x\$env:OUTPUT_DIR\boat_journey.exe
+    - run: copy-item target\x86_64-pc-windows-gnu\release\boat_journey_ggez.exe x\$env:OUTPUT_DIR\boat-journey-compatibility.exe
+    - run: Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('x', $env:OUTPUT_DIR + '.zip');
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.zip"
+
+  release-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+    - uses: actions/checkout@v3
+    - name: 'Build wasm version'
+      run: |
+        pushd web
+        npm install
+        NODE_OPTIONS=--openssl-legacy-provider npm run build-production
+        ARCHIVE_NAME=boat-journey-web-${{ github.ref_name }}
+        mv dist $ARCHIVE_NAME
+        zip -r $ARCHIVE_NAME.zip $ARCHIVE_NAME
+        popd
+        mv web/$ARCHIVE_NAME.zip .
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.zip"
+
+  release-macos-aarch64:
+    runs-on: macOS-latest
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+        targets: aarch64-apple-darwin
+    - uses: actions/checkout@v3
+    - name: 'Build graphical version'
+      run: cargo build --target=aarch64-apple-darwin --manifest-path=wgpu/Cargo.toml --release
+    - name: 'Build graphical version (compatibility)'
+      run: cargo build --target=aarch64-apple-darwin --manifest-path=ggez/Cargo.toml --release
+    - name: 'Build ansi-terminal version'
+      run: cargo build --target=aarch64-apple-darwin --manifest-path=ansi-terminal/Cargo.toml --release
+    - name: 'Strip binaries'
+      run: |
+        strip -v target/aarch64-apple-darwin/release/boat_journey_wgpu
+        strip -v target/aarch64-apple-darwin/release/boat_journey_ggez
+        strip -v target/aarch64-apple-darwin/release/boat_journey_ansi_terminal
+    - name: 'Make archives'
+      run: MODE=aarch64-apple-darwin/release ARCHIVE_NAME=boat-journey-macos-aarch64-${{ github.ref_name }} scripts/make_archives_unix.sh
+    - name: 'Make app and disk image'
+      run: MODE=aarch64-apple-darwin/release APP_NAME=BoatJourney DMG_NAME=BoatJourney-macos-aarch64-${{ github.ref_name }}.dmg scripts/make_dmg_macos.sh
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.tar.gz,*.zip,*.dmg"
+
+  release-unix-x86_64:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+    steps:
+    - if: matrix.os == 'ubuntu-latest'
+      name: 'Install dependencies (ubuntu)'
+      run: |
+        sudo apt update
+        sudo apt install libudev-dev libasound2-dev
+    - if: matrix.os == 'ubuntu-latest'
+      name: 'Set system name (ubuntu)'
+      run: echo SYSTEM_NAME=linux >> $GITHUB_ENV
+    - if: matrix.os == 'macOS-latest'
+      name: 'Set system name (macOS)'
+      run: echo SYSTEM_NAME=macos >> $GITHUB_ENV
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: stable
+    - uses: actions/checkout@v3
+    - name: 'Build graphical version'
+      run: cargo build --manifest-path=wgpu/Cargo.toml --release
+    - name: 'Build graphical version (compatibility)'
+      run: cargo build --manifest-path=ggez/Cargo.toml --release
+    - name: 'Build ansi-terminal version'
+      run: cargo build --manifest-path=ansi-terminal/Cargo.toml --release
+    - name: 'Strip binaries'
+      run: |
+        strip -v target/release/boat_journey_wgpu
+        strip -v target/release/boat_journey_ggez
+        strip -v target/release/boat_journey_ansi_terminal
+    - name: 'Make archives'
+      run: MODE=release ARCHIVE_NAME=boat-journey-${{ env.SYSTEM_NAME }}-x86_64-${{ github.ref_name }} scripts/make_archives_unix.sh
+    - if: matrix.os == 'macOS-latest'
+      name: 'Make macos app and disk image'
+      run: MODE=release APP_NAME=BoatJourney DMG_NAME=BoatJourney-macos-x86_64-${{ github.ref_name }}.dmg scripts/make_dmg_macos.sh
+    - uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.tar.gz,*.zip,*.dmg"
