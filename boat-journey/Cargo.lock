@@ -295,6 +295,7 @@ dependencies = [
  "boat_journey_native",
  "chargrid_ansi_terminal",
  "env_logger",
+ "log",
  "meap",
  "rand",
 ]

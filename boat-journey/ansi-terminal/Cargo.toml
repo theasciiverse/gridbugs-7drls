@@ -10,4 +10,5 @@ env_logger = "0.10"
 meap = "0.5"
 boat_journey_app = { path = "../app" }
 boat_journey_native = { path = "../native" }
+log = "0.4"
 rand = "0.8"
