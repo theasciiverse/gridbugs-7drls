@@ -1,0 +1,12 @@
+[package]
+name = "procgen"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+coord_2d = "0.4"
+grid_2d = "0.16"
+line_2d = "0.6"
+direction = { version = "0.19", features = ["rand"] }
+rand = "0.9"
+vector = { path = "../util/vector" }
