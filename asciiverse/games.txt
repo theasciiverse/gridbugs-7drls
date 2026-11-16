@@ -1,0 +1,8 @@
+# id                      folder                    cargo package               cargo flags
+orbital-decay             orbital-decay             orbital_decay_ansi_terminal --no-default-features
+boat-journey              boat-journey              boat_journey_ansi_terminal
+slime99                   slime99                   slime99_ansi_terminal       --no-default-features
+electric-organ            electric-organ            frontend_ansi_terminal
+road-closed               road-closed               frontend_ansi_terminal
+rain-forest               rainforest                rainforest_ansi_terminal
+meters-below-the-ground   meters-below-the-ground   meters_unix
