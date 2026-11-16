@@ -1,0 +1,51 @@
+id_width = 16
+spatial_hash_key = 'coord'
+
+[components]
+coord = { type = '::grid_2d::Coord', storage = 'vector' }
+solid = { storage = 'vector' }
+collider = { storage = 'vector' }
+player = { storage = 'btree' }
+door_opener = { storage = 'btree' }
+tile_info = { type = '::tile_info::TileInfo', storage = 'vector' }
+npc = { type = '::npc_info::NpcInfo', storage = 'btree' }
+punch = { storage = 'hash' }
+stairs = { storage = 'btree' }
+exit = { storage = 'btree' }
+slide_direction = { type = '::direction::CardinalDirection', storage = 'hash' }
+bullet = { type = 'u32', storage = 'hash' }
+rail_gun_shot = { storage = 'hash' }
+door = { storage = 'hash' }
+health_meter = { type = '::meter::Meter', storage = 'hash' }
+gun_meter = { type = '::meter::Meter', storage = 'hash' }
+rail_gun_meter = { type = '::meter::Meter', storage = 'hash' }
+kevlar_meter = { type = '::meter::Meter', storage = 'hash' }
+medkit_meter = { type = '::meter::Meter', storage = 'hash' }
+stamina_meter = { type = '::meter::Meter', storage = 'hash' }
+compass_meter = { type = '::meter::Meter', storage = 'hash' }
+stamina_tick = { type = 'i32', storage = 'btree' }
+metabol_meter = { type = '::meter::Meter', storage = 'hash' }
+blink_meter = { type = '::meter::Meter', storage = 'hash' }
+push_meter = { type = '::meter::Meter', storage = 'hash' }
+opacity = { type = 'u8', storage = 'vector' }
+pickup = { type = '::pickup::Pickup', storage = 'hash' }
+transform = { type = '::transform::Transform', storage = 'hash' }
+countdown = { type = 'i32', storage = 'hash' }
+countdown_max = { type = 'i32', storage = 'hash' }
+delayed_transform = { storage = 'hash' }
+pushed = { type = '::pushed::PushedInfo', storage = 'hash' }
+metabol_wave = { type = '::wave::Wave', storage = 'hash' }
+push_wave = { type = '::wave::Wave', storage = 'hash' }
+beacon = { type = '::beacon::BeaconStatus', storage = 'btree' }
+
+[spatial_hash]
+solid_count = { component = 'solid', aggregate = 'count' }
+door_count = { component = 'door', aggregate = 'count' }
+player_count = { component = 'player', aggregate = 'count' }
+npc_set = { component = 'npc', aggregate = 'set' }
+tile_set = { component = 'tile_info', aggregate = 'set' }
+stairs_count = { component = 'stairs', aggregate = 'count' }
+exit_count = { component = 'exit', aggregate = 'count' }
+opacity_total = { component = 'opacity', aggregate = 'total' }
+pickup_set = { component = 'pickup', aggregate = 'set' }
+beacon_set = { component = 'beacon', aggregate = 'set' }

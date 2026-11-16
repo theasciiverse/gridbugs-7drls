@@ -1,0 +1,13 @@
+[package]
+name = "meters_wasm"
+version = "0.1.0"
+authors = ["Stephen Sherratt <sfsherratt@gmail.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+meters_prototty = { path = "../prototty" }
+prototty_wasm = { version = "0.23", features = ["storage"] }
+rand = "0.6"
+wasm-bindgen = "0.2"
