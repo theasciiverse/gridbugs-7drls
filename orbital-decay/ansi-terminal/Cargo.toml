@@ -1,0 +1,13 @@
+[package]
+name = "orbital_decay_ansi_terminal"
+version = "0.1.0"
+authors = ["Stephen Sherratt <stephen@sherra.tt>"]
+edition = "2021"
+
+[dependencies]
+gridbugs = { version = "0.10", features = [ "chargrid_ansi_terminal_gamepad" ] }
+env_logger = "0.10"
+meap = "0.5"
+orbital_decay_app = { path = "../app" }
+orbital_decay_native = { path = "../native" }
+rand = "0.8"

@@ -1,0 +1,16 @@
+[package]
+name = "orbital_decay_game"
+version = "0.1.0"
+authors = ["Stephen Sherratt <stephen@sherra.tt>"]
+edition = "2021"
+
+[dependencies]
+gridbugs = { version = "0.10", features = [ "backend_serialize", "rgb_int_rand" ] }
+log = "0.4"
+serde = { version = "1.0", features = ["serde_derive"] }
+rand = "0.8"
+rand_isaac = { version = "0.3", features = ["serde1"] }
+vector = { path = "../util/vector" }
+rational = { path = "../util/rational" }
+rand_range = { path = "../util/rand-range" }
+procgen = { path = "../procgen" }
