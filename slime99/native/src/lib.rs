@@ -1,3 +1,4 @@
+#[cfg(feature = "sound")]
 use general_audio_static::{
     backend::{Error as NativeAudioError, NativeAudioPlayer},
     StaticAudioPlayer,
@@ -14,6 +15,23 @@ use std::path::PathBuf;
 const DEFAULT_SAVE_FILE: &str = "save";
 const DEFAULT_NEXT_TO_EXE_SAVE_DIR: &str = "save";
 const DEFAULT_NEXT_TO_EXE_CONTROLS_FILE: &str = "controls.json";
+
+/// Asciiverse: the folder for saves, `$XDG_STATE_HOME/<STATE_ID>`, else
+/// `~/.local/state/<STATE_ID>`, or `%LOCALAPPDATA%\<STATE_ID>` on Windows. None when none of
+/// those is set; the game then keeps upstream's `save` folder next to the executable.
+const STATE_ID: &str = "slime99";
+
+fn state_dir() -> Option<PathBuf> {
+    let abs = |name: &str| env::var_os(name).map(PathBuf::from).filter(|p| p.is_absolute());
+    let base = abs("XDG_STATE_HOME").or_else(|| {
+        if cfg!(windows) {
+            abs("LOCALAPPDATA")
+        } else {
+            abs("HOME").map(|home| home.join(".local").join("state"))
+        }
+    });
+    base.map(|base| base.join(STATE_ID))
+}
 
 pub struct NativeCommon {
     pub rng_seed: RngSeed,
@@ -38,8 +56,8 @@ impl NativeCommon {
                 rng_seed = opt_opt::<u64, _>("INT", 'r').name("rng-seed").desc("rng seed to use for first new game");
                 save_file = opt_opt("PATH", 's').name("save-file").desc("save file")
                     .with_default(DEFAULT_SAVE_FILE.to_string());
-                save_dir = opt_opt("PATH", 'd').name("save-dir").desc("save dir")
-                    .with_default(DEFAULT_NEXT_TO_EXE_SAVE_DIR.to_string());
+                save_dir = opt_opt::<String, _>("PATH", 'd').name("save-dir")
+                    .desc("save dir next to the executable (default: the state folder)");
                 controls_file = opt_opt::<String, _>("PATH", 'c').name("controls-file").desc("controls file");
                 delete_save = flag("delete-save").desc("delete save game file");
                 omniscient = flag("omniscient").desc("enable omniscience");
@@ -53,16 +71,26 @@ impl NativeCommon {
                         .to_path_buf()
                 };
                 let controls = read_controls_file(&controls_file).unwrap_or_else(Controls::default);
-                let mut file_storage = StaticStorage::new(FileStorage::next_to_exe(
-                    &save_dir,
-                    IfDirectoryMissing::Create,
-                ).expect("failed to open directory"));
+                let file_storage = match (save_dir, state_dir()) {
+                    (Some(dir), _) => FileStorage::next_to_exe(dir, IfDirectoryMissing::Create),
+                    (None, Some(dir)) => FileStorage::new(dir, IfDirectoryMissing::Create),
+                    (None, None) => FileStorage::next_to_exe(DEFAULT_NEXT_TO_EXE_SAVE_DIR, IfDirectoryMissing::Create),
+                }
+                .expect("failed to open directory");
+                log::info!("state folder: {}", file_storage.full_path("").display());
+                let mut file_storage = StaticStorage::new(file_storage);
                 if delete_save {
                     let result = file_storage.remove(&save_file);
                     if result.is_err() {
                         log::warn!("couldn't find save file to delete");
                     }
                 }
+                #[cfg(not(feature = "sound"))]
+                let audio_player = {
+                    let _ = mute;
+                    None
+                };
+                #[cfg(feature = "sound")]
                 let audio_player = if mute {
                     None
                 } else {
