@@ -1,0 +1,16 @@
+[workspace]
+
+members = [
+    "vector",
+    "procgen",
+    "rand-range",
+    "game",
+    "app",
+    "native",
+    "graphical",
+    "ansi-terminal",
+    "web",
+]
+
+[profile.release]
+lto = true
