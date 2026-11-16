@@ -43,6 +43,13 @@ impl Args {
 
 fn main() {
     use meap::Parser;
+    // Session log on stderr (Asciiverse): RUST_LOG=debug for everything, errors only by default.
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("error")).init();
+    log::info!(
+        "Electric Organ {} started: {:?}",
+        env!("CARGO_PKG_VERSION"),
+        std::env::args().skip(1).collect::<Vec<_>>()
+    );
     let Args {
         native_common:
             NativeCommon {
