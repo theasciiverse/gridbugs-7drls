@@ -1,0 +1,10 @@
+**/target/
+**/*.rs.bk
+**/*.sw?
+**/*.wasm
+Cargo.lock
+.direnv
+.envrc
+*.zip
+*.dmg
+**/.DS_Store

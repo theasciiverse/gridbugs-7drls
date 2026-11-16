@@ -1,0 +1,25 @@
+[package]
+name = "procgen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+coord_2d = "0.4"
+grid_2d = "0.16"
+line_2d = "0.6"
+direction = { version = "0.19", features = ["rand"] }
+rand = "0.9"
+vector = { path = "../util/vector" }
+perlin2 = "0.2"
+
+[[example]]
+name = "city"
+
+[[example]]
+name = "pine_plantation"
+
+[[example]]
+name = "forest"
+
+[[example]]
+name = "mountain_pass"

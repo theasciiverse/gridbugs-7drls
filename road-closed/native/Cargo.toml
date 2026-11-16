@@ -1,0 +1,12 @@
+[package]
+name = "native"
+version = "0.1.0"
+authors = ["Stephen Sherratt <stephen@sherra.tt>"]
+edition = "2024"
+
+[dependencies]
+general_storage_file = "0.3"
+general_storage_static = { version = "0.3", features = ["file"] }
+log = "0.4"
+app = { path = "../app", features = ["native"] }
+meap = "0.8"
