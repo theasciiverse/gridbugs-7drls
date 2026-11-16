@@ -2506,6 +2506,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger",
  "gridbugs",
+ "log",
  "meap",
  "orbital_decay_app",
  "orbital_decay_native",
