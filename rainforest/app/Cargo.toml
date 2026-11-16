@@ -6,7 +6,7 @@ edition = "2021"
 [features]
 print_stdout = []
 print_log = []
-native = ["gridbugs/storage_backend_file", "gridbugs/audio_backend_native"]
+native = ["gridbugs/storage_backend_file"]
 web = ["getrandom/js", "gridbugs/storage_backend_web", "gridbugs/audio_backend_web"]
 
 [dependencies]

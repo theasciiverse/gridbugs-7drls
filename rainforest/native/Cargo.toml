@@ -6,8 +6,6 @@ edition = "2021"
 [dependencies]
 gridbugs = { version = "0.2", features = [
     "storage_backend_file",
-    "audio_backend_native",
-    "audio_format_native_vorbis",
 ] }
 log = "0.4"
 rainforest_app = { path = "../app", features = ["native"] }
