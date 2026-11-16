@@ -1,0 +1,12 @@
+[package]
+name = "rainforest_ansi_terminal"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gridbugs = { version = "0.2", features = [ "chargrid_ansi_terminal_gamepad" ] }
+env_logger = "0.9"
+meap = "0.5"
+rainforest_app = { path = "../app" }
+rainforest_native = { path = "../native" }
+rand = "0.8"
