@@ -848,6 +848,7 @@ dependencies = [
  "app",
  "chargrid_ansi_terminal",
  "env_logger",
+ "log",
  "meap",
  "native",
  "rand",
