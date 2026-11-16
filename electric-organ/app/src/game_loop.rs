@@ -341,8 +341,9 @@ impl GameLoopData {
             storage.save_controls(&controls);
             controls
         };
-        let music_state = MusicState::new();
+        let mut music_state = MusicState::new();
         if mute {
+            music_state.set_silent();
             music_state.set_volume(0.0);
         } else {
             music_state.set_volume(0.5);

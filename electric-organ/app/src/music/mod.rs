@@ -36,6 +36,9 @@ pub struct MusicState {
     // in response to IO.
     player: Option<PlayerAsyncStereo>,
     sfx_player: Option<PlayerAsyncMono>,
+    // No audio output at all: muted from the start (`--mute`), or no output device could be
+    // opened. Then no player is ever created.
+    silent: bool,
 }
 
 impl MusicState {
@@ -64,6 +67,7 @@ impl MusicState {
             sfx_sig,
             player: None,
             sfx_player: None,
+            silent: false,
         }
     }
 
@@ -81,31 +85,38 @@ impl MusicState {
         self.control.borrow_mut().volume = volume;
     }
 
+    /// Never open an audio output (`--mute`).
+    pub fn set_silent(&mut self) {
+        self.silent = true;
+    }
+
     pub fn tick(&mut self) {
-        if self.player.is_none() {
-            self.player = Some(
-                Player::new()
-                    .unwrap()
-                    .into_async_stereo(Default::default())
-                    .unwrap(),
-            );
+        if self.silent {
+            return;
         }
-        if self.sfx_player.is_none() {
-            self.sfx_player = Some(
-                Player::new()
-                    .unwrap()
-                    .into_async_mono(Default::default())
-                    .unwrap(),
-            );
+        if self.player.is_none() || self.sfx_player.is_none() {
+            let stereo = Player::new()
+                .ok()
+                .and_then(|player| player.into_async_stereo(Default::default()).ok());
+            let mono = Player::new()
+                .ok()
+                .and_then(|player| player.into_async_mono(Default::default()).ok());
+            match (stereo, mono) {
+                (Some(stereo), Some(mono)) => {
+                    self.player = Some(stereo);
+                    self.sfx_player = Some(mono);
+                }
+                _ => {
+                    log::warn!("couldn't open an audio output device, playing without sound");
+                    self.silent = true;
+                    return;
+                }
+            }
         }
-        self.player
-            .as_mut()
-            .unwrap()
-            .play_signal(&mut self.sig_stereo);
-        self.sfx_player
-            .as_mut()
-            .unwrap()
-            .play_signal(&mut self.sfx_sig);
+        if let (Some(player), Some(sfx_player)) = (self.player.as_mut(), self.sfx_player.as_mut()) {
+            player.play_signal(&mut self.sig_stereo);
+            sfx_player.play_signal(&mut self.sfx_sig);
+        }
     }
 
     pub fn sfx_pistol(&self) {
